@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>OOP Task</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --accent-red: #ff6b6b;
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-orange: #fb923c;
+      --text-main: #f1f5f9;
+      --text-dim: #94a3b8;
+      --border-color: #334155;
+      --terminal-bg: #000000;
+      --font-mono: 'Fira Code', 'Cascadia Code', monospace;
+      --shadow-style: 0 10px 15px -3px rgba(0,0,0,0.3);
+      --panel-radius: 18px;
+      --top-h: 28vh;
+    }
+
+    body.light-mode {
+      --bg-dark: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-dim: #64748b;
+      --border-color: #e2e8f0;
+      --shadow-style: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --accent-blue: #0ea5e9;
+      --accent-green: #16a34a;
+      --accent-orange: #ea580c;
+      --terminal-bg: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    button, input, label { font: inherit; }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--bg-dark) 86%, #000 14%);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow-style);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .brand .app-name {
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+    }
+
+    .brand .title {
+      font-size: 1.05rem;
+      font-weight: 900;
+    }
+
+    .style-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+
+    .chip-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--accent-green);
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-green) 18%, transparent);
+    }
+
+    .theme-toggle {
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+      color: var(--text-main);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .top-section {
+      padding: 14px;
+    }
+
+    .hero {
+      border: 1px solid var(--border-color);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--card-bg) 92%, transparent) 0%, color-mix(in srgb, var(--card-bg) 100%, transparent) 100%);
+      border-radius: 24px;
+      box-shadow: var(--shadow-style);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 14px;
+      padding: 16px;
+      min-height: calc(var(--top-h) - 18px);
+    }
+
+    .hero-card {
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 88%, transparent);
+      border-radius: 18px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.2rem, 2vw, 2rem);
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+
+    .hero p {
+      color: var(--text-dim);
+      margin-top: 8px;
+      max-width: 70ch;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      padding: 7px 10px;
+      background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+      color: var(--text-main);
+      font-size: 0.86rem;
+    }
+
+    .hero-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-item {
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 86%, transparent);
+      padding: 14px;
+    }
+
+    .hero-item .label {
+      display: block;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .hero-item .value {
+      font-size: 0.98rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .bottom-section {
+      flex: 1;
+      padding: 14px;
+      padding-top: 0;
+      min-height: 0;
+    }
+
+    .bottom-grid {
+      min-height: calc(100vh - var(--top-h) - 110px);
+      display: grid;
+      grid-template-columns: minmax(250px, 0.92fr) minmax(0, 1.58fr);
+      gap: 14px;
+    }
+
+    .control-panel,
+    .task-panel,
+    .ide-panel {
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 92%, transparent);
+      border-radius: var(--panel-radius);
+      box-shadow: var(--shadow-style);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 96%, transparent);
+    }
+
+    .panel-header h2 {
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .panel-body {
+      padding: 14px 16px 16px;
+    }
+
+    .control-group {
+      margin-bottom: 16px;
+      padding: 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--card-bg) 86%, transparent);
+    }
+
+    .control-group h3 {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .control-group p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .checks {
+      display: grid;
+      gap: 10px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--card-bg) 78%, transparent);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-blue);
+    }
+
+    .check span {
+      font-weight: 600;
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+      color: #fff;
+      box-shadow: var(--shadow-style);
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:hover { opacity: 0.95; }
+
+    .btn-primary { background: linear-gradient(135deg, var(--accent-blue), var(--accent-green)); }
+
+    .mini-note {
+      margin-top: 12px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .right-stack {
+      display: grid;
+      grid-template-rows: 1fr 1.1fr;
+      gap: 14px;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .task-box {
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 14px;
+      background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+      min-height: 240px;
+      white-space: pre-wrap;
+      overflow: auto;
+      font-size: 0.95rem;
+    }
+
+    .task-box .section {
+      margin-bottom: 12px;
+    }
+
+    .task-box .section-title {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+    }
+
+    .task-box .line {
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 80%, transparent);
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .ide-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .ide-toolbar button {
+      border: 1px solid var(--border-color);
+      background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+      color: var(--text-main);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .ide-wrap {
+      position: relative;
+      height: 100%;
+      min-height: 0;
+      border-top: 1px solid var(--border-color);
+      background: var(--terminal-bg);
+    }
+
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      background: color-mix(in srgb, var(--terminal-bg) 88%, #000 12%);
+      color: var(--accent-green);
+      z-index: 2;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 4px solid color-mix(in srgb, var(--accent-green) 22%, transparent);
+      border-top-color: var(--accent-green);
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 320px;
+      border: 0;
+      background: #fff;
+    }
+
+    .footer-hint {
+      margin-top: 10px;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+    }
+
+    body.light-mode .loading-overlay {
+      background: #020617;
+    }
+
+    @media (max-width: 980px) {
+      :root { --top-h: auto; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .bottom-grid { grid-template-columns: 1fr; }
+      .right-stack { grid-template-rows: auto auto; }
+    }
+
+    @media (max-width: 640px) {
+      .top-bar {
+        padding: 10px 12px;
+      }
+      .brand {
+        gap: 6px;
+      }
+      .hero-grid,
+      .panel-body {
+        padding: 12px;
+      }
+      .bottom-section,
+      .top-section {
+        padding: 12px;
+      }
+      .task-box {
+        min-height: 220px;
+      }
+      .ide-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .ide-toolbar button,
+      .btn,
+      .theme-toggle {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="brand">
+        <div class="app-name">BETA • Bugs May Occur</div>
+        <div class="title">OOP TASK</div>
+        <div class="style-chip"><span class="chip-dot"></span><span id="styleName">Dark Neon • Desktop Split</span></div>
+      </div>
+      <button id="themeToggle" class="theme-toggle" type="button">Light Mode</button>
+    </header>
+
+    <section class="top-section">
+      <div class="hero">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <h1>TASK GENERATOR</h1>
+            <p>
+              This app generates OOP tasks using themes, types, sentence pools, and a shared context.
+              The task is built in three parts: HEADER, BODY, and FOOTER.
+            </p>
+            <div class="tag-row">
+              <div class="tag">TASK GIVER</div>
+              <div class="tag">Encapsulation / Inheritance / Polymorphism / Abstraction</div>
+            </div>
+          </div>
+
+          <div class="hero-list">
+            <div class="hero-item">
+              <span class="label">What it does</span>
+              <div class="value">Picks a theme, picks a type, creates variables, and builds a task.</div>
+            </div>
+            <div class="hero-item">
+              <span class="label">Current style</span>
+              <div class="value" id="heroStyle">Dark Neon • Desktop Split</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bottom-section">
+      <div class="bottom-grid">
+        <aside class="control-panel">
+          <div class="panel-header">
+            <h2>Control Panel</h2>
+            <span class="badge" id="contextBadge">Ready</span>
+          </div>
+          <div class="panel-body">
+            <div class="control-group">
+              <h3>Task stages</h3>
+              <p>Select which body stages should be included in the generated task.</p>
+              <div class="checks">
+                <label class="check"><input type="checkbox" value="Intro" checked><span>Introduction</span></label>
+                <label class="check"><input type="checkbox" value="Encap"><span>Encapsulation</span></label>
+                <label class="check"><input type="checkbox" value="Inherit"><span>Inheritance</span></label>
+                <label class="check"><input type="checkbox" value="Poly"><span>Polymorphism</span></label>
+                <label class="check"><input type="checkbox" value="Abstract"><span>Abstraction</span></label>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary" id="constructBtn" type="button">Construct Stage</button>
+            </div>
+
+            <div class="mini-note">
+              Head is always created first, body depends on the checked stages, and footer always adds the display and
+              calculation parts.
+            </div>
+          </div>
+        </aside>
+
+        <div class="right-stack">
+          <section class="task-panel">
+            <div class="panel-header">
+              <h2>Task Panel</h2>
+              <span class="badge" id="stageBadge">No task yet</span>
+            </div>
+            <div class="panel-body">
+              <div class="task-box" id="taskBox">Press <strong>Construct Stage</strong> to generate a task.</div>
+            </div>
+          </section>
+
+          <section class="ide-panel">
+            <div class="panel-header">
+              <h2>IDE Panel</h2>
+              <div class="ide-toolbar">
+                <button id="reloadBtn" type="button">Reload</button>
+                <button id="openTabBtn" type="button">Open in New Tab</button>
+              </div>
+            </div>
+            <div class="ide-wrap">
+              <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <div>Loading IDE...</div>
+              </div>
+              <iframe id="ideFrame" title="Embedded IDE" src="https://example.com"></iframe>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const TYPES = {
+      FINANCIAL: {
+        info: ["Name", "ID", "Account", "Branch"],
+        calc: ["Balance", "Payment", "Interest", "Penalty", "Deposit", "Withdrawal", "Rate"],
+        formulas: [
+          "[1] * [2]",
+          "[1] * [2] + [3]",
+          "([1] * [2]) - {3,4}",
+          "([1] * [2]) + [3] - [4]"
+        ]
+      },
+      ACADEMIC: {
+        info: ["Name", "ID", "Course", "Section"],
+        calc: ["Grade", "Units", "Score", "Bonus", "Points"],
+        formulas: [
+          "[1] * [2]",
+          "[1] * [2] + [3]",
+          "([1] * [2]) - {3,4}"
+        ]
+      },
+      BUSINESS: {
+        info: ["Name", "ID", "Company", "Role"],
+        calc: ["Sales", "Orders", "Revenue", "Discount", "Profit"],
+        formulas: [
+          "[1] * [2]",
+          "[1] * [2] + [3]",
+          "([1] * [2]) - {3,4}"
+        ]
+      },
+      PRODUCT: {
+        info: ["Name", "ID", "Category", "Brand"],
+        calc: ["Price", "Quantity", "Stock", "Tax", "Cost"],
+        formulas: [
+          "[1] * [2]",
+          "[1] * [2] + [3]",
+          "([1] * [2]) - {3,4}"
+        ]
+      }
+    };
+
+    const THEMES = [
+      { name: "Customer", type: "FINANCIAL" },
+      { name: "Employee", type: "BUSINESS" },
+      { name: "Account", type: "FINANCIAL" },
+      { name: "Student", type: "ACADEMIC" },
+      { name: "Teacher", type: "ACADEMIC" },
+      { name: "Subject", type: "ACADEMIC" },
+      { name: "Product", type: "PRODUCT" },
+      { name: "Inventory", type: "PRODUCT" }
+    ];
+
+    const CONTEXT = {
+      mainClass: [
+        (ctx) => `Create a main class named ${ctx.theme}.`,
+        (ctx) => `Create a Java class named ${ctx.theme}.`,
+        (ctx) => `Make the main class name ${ctx.theme}.`,
+        (ctx) => `Start with a main class called ${ctx.theme}.`,
+        (ctx) => `Build a main class named ${ctx.theme}.`,
+        (ctx) => `Define the main class as ${ctx.theme}.`,
+        (ctx) => `Create the primary class named ${ctx.theme}.`,
+        (ctx) => `Use ${ctx.theme} as the main class name.`,
+        (ctx) => `Set the main class name to ${ctx.theme}.`,
+        (ctx) => `Name the main class ${ctx.theme}.`
+      ],
+      anotherClass: [
+        (ctx) => `Create another class named ${ctx.className}.`,
+        (ctx) => `Add a second class called ${ctx.className}.`,
+        (ctx) => `Create a supporting class named ${ctx.className}.`,
+        (ctx) => `Define another class as ${ctx.className}.`,
+        (ctx) => `Use ${ctx.className} as the second class name.`,
+        (ctx) => `Make a second class named ${ctx.className}.`,
+        (ctx) => `Add a class named ${ctx.className}.`,
+        (ctx) => `Create the related class ${ctx.className}.`,
+        (ctx) => `Develop another class called ${ctx.className}.`,
+        (ctx) => `Set the second class name to ${ctx.className}.`
+      ],
+      attributes: [
+        (ctx) => `Add attributes named ${ctx.vars}.`,
+        (ctx) => `Declare the following attributes: ${ctx.vars}.`,
+        (ctx) => `Create fields named ${ctx.vars}.`,
+        (ctx) => `Define attributes as ${ctx.vars}.`,
+        (ctx) => `Use these attributes: ${ctx.vars}.`,
+        (ctx) => `Include the attributes ${ctx.vars}.`,
+        (ctx) => `Add the field names ${ctx.vars}.`,
+        (ctx) => `Create the following fields: ${ctx.vars}.`,
+        (ctx) => `Set up attributes called ${ctx.vars}.`,
+        (ctx) => `Make attributes for ${ctx.vars}.`
+      ],
+    
+      Intro: [
+        (ctx) => `Use the ${ctx.theme} theme for the task.`,
+        (ctx) => `Develop a class based on the ${ctx.theme} theme.`,
+        (ctx) => `Create a task about ${ctx.theme}.`,
+        (ctx) => `Build the program using the ${ctx.theme} theme.`,
+        (ctx) => `Write a solution using the ${ctx.theme} theme.`,
+        (ctx) => `Construct the exercise around ${ctx.theme}.`,
+        (ctx) => `Make the task about ${ctx.theme}.`,
+        (ctx) => `Design the class using the ${ctx.theme} theme.`,
+        (ctx) => `Generate an OOP task with the ${ctx.theme} theme.`,
+        (ctx) => `Base the problem on ${ctx.theme}.`
+      ],
+    
+      Encap: [
+        () => `Apply encapsulation to the attributes by making them private.`,
+        () => `Make all attributes private and use encapsulation properly.`,
+        () => `Use private fields for encapsulation.`,
+        () => `Hide the attributes by making them private.`,
+        () => `Apply the encapsulation principle to all fields.`,
+        () => `Make every attribute private.`,
+        () => `Encapsulate the data by using private attributes.`,
+        () => `Protect the fields with private access.`,
+        () => `Use private access for all attributes.`,
+        () => `Follow encapsulation by keeping the fields private.`  
+      ],
+    
+      Inherit: [
+        (ctx) => `Create a subclass that inherits from ${ctx.theme}.`,
+        (ctx) => `Extend the ${ctx.theme} class and reuse its properties.`,
+        (ctx) => `Make a child class based on ${ctx.theme}.`,
+        (ctx) => `Create inheritance using ${ctx.theme} as the parent class.`,
+        (ctx) => `Build a subclass from ${ctx.theme}.`,
+        (ctx) => `Use ${ctx.theme} as the superclass.`,
+        (ctx) => `Create a derived class that extends ${ctx.theme}.`,
+        (ctx) => `Implement inheritance with ${ctx.theme}.`,
+        (ctx) => `Add a subclass that uses ${ctx.theme} methods and fields.`,
+        (ctx) => `Make a class that inherits the structure of ${ctx.theme}.`
+      ],
+    
+      Poly: [
+        () => `Override the displayInfo() method.`,
+        () => `Demonstrate polymorphism by overriding a method.`,
+        () => `Use method overriding for polymorphism.`,
+        () => `Override an existing method in the child class.`,
+        () => `Show polymorphism through an overridden method.`,
+        () => `Create a new version of displayInfo() in the subclass.`,
+        () => `Apply polymorphism with method overriding.`,
+        () => `Replace the parent method with an overridden method.`,
+        () => `Override one method to show polymorphic behavior.`,
+        () => `Demonstrate dynamic behavior using overriding.`
+      ],
+    
+      Abstract: [
+        () => `Create an abstract class for the design.`,
+        () => `Use abstraction in your solution.`,
+        () => `Build the structure with an abstract class.`,
+        () => `Apply abstraction by creating an abstract class.`,
+        () => `Use an abstract class to organize the program.`,
+        () => `Define the base structure as abstract.`,
+        () => `Make the main structure abstract.`,
+        () => `Create abstraction through an abstract parent class.`,
+        () => `Use an abstract class as the foundation.`,
+        () => `Design the solution with abstraction.`
+      ],
+    
+      displayInfo: [
+        () => `Create a method displayInfo() that displays all attributes.`,
+        () => `Create a method that prints the values of every field.`,
+        () => `Add a method to show all stored information.`,
+        () => `Write a method that displays all attribute values.`,
+        () => `Create a display method for all fields.`,
+        () => `Show all attributes using a method.`,
+        () => `Print every attribute value using displayInfo().`,
+        () => `Add a method that outputs all data.`,
+        () => `Display the complete set of fields in a method.`,
+        () => `Create a method that reveals all attribute values.`
+      ],
+    
+      Calculate: [
+        (ctx) => `Create a calculation method using ${ctx.formula}.`,
+        (ctx) => `Create a method that returns the result of ${ctx.formula}.`,
+        (ctx) => `Use ${ctx.formula} in a calculation method.`,
+        (ctx) => `Add a method that computes ${ctx.formula}.`,
+        (ctx) => `Create a method for calculating ${ctx.formula}.`,
+        (ctx) => `Return the value of ${ctx.formula} from a method.`,
+        (ctx) => `Compute the result using ${ctx.formula}.`,
+        (ctx) => `Write a method that evaluates ${ctx.formula}.`,
+        (ctx) => `Make a calculation function for ${ctx.formula}.`,
+        (ctx) => `Use the formula ${ctx.formula} inside a method.`
+      ]
+    };
+
+    const IDE_SRC = "https://example.com";
+    let CURRENT_CONTEXT = null;
+
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function shuffle(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function titleCase(text) {
+      return String(text)
+        .replace(/[_-]+/g, " ")
+        .split(" ")
+        .filter(Boolean)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join("");
+    }
+
+function getTextVariables(vars) {
+  if (!vars?.length) return "";
+
+  if (vars.length === 1) {
+    return vars[0];
+  }
+
+  if (vars.length === 2) {
+    return vars.join(" and ");
+  }
+
+  return vars.slice(0, -1).join(", ") + " and " + vars.at(-1);
+}
+
+    function lowerCamel(text) {
+      const tc = titleCase(text);
+      return tc.charAt(0).toLowerCase() + tc.slice(1);
+    }
+
+    function asFieldName(theme, field) {
+      return lowerCamel(theme) + titleCase(field);
+    }
+
+    function maxPlaceholderIndex(formula) {
+      const matches = formula.match(/\d+/g) || [];
+      return matches.reduce((max, n) => Math.max(max, Number(n)), 0);
+    }
+
+    function replaceFormula(template, selectedCalcVars) {
+      const withChoice = template.replace(/\{([^}]+)\}/g, (_, group) => {
+        const options = group.split(",").map(x => Number(x.trim())).filter(Boolean);
+        const chosenIndex = pick(options);
+        return selectedCalcVars[chosenIndex - 1] ?? "";
+      });
+
+      return withChoice.replace(/\[(\d+)\]/g, (_, n) => {
+        const idx = Number(n) - 1;
+        return selectedCalcVars[idx] ?? "";
+      });
+    }
+
+    function getContext() {
+      return CURRENT_CONTEXT;
+    }
+
+    function generateContext() {
+      const themeObject = pick(THEMES);
+      const typeKey = themeObject.type;
+      const typeObject = TYPES[typeKey];
+      const typeName = titleCase(typeKey);
+
+      const selectedFormulaTemplate = pick(typeObject.formulas);
+      const requiredCalcCount = Math.max(maxPlaceholderIndex(selectedFormulaTemplate), 2);
+
+      const infoSelection = shuffle(typeObject.info).slice(0, Math.min(2, typeObject.info.length));
+      const calcSelection = shuffle(typeObject.calc).slice(0, Math.min(requiredCalcCount, typeObject.calc.length));
+
+      while (calcSelection.length < requiredCalcCount && typeObject.calc.length > calcSelection.length) {
+        const next = typeObject.calc.find(v => !calcSelection.includes(v));
+        if (!next) break;
+        calcSelection.push(next);
+      }
+
+      const infoVariables = infoSelection.map(field => asFieldName(themeObject.name, field));
+      const calcVariables = calcSelection.map(field => asFieldName(themeObject.name, field));
+      const variables = [...infoVariables, ...calcVariables];
+      const formula = replaceFormula(selectedFormulaTemplate, calcVariables);
+
+      CURRENT_CONTEXT = {
+        formula,
+        variables,
+        infoVariables,
+        calcVariables,
+        typeName,
+        theme: themeObject.name,
+        themeObject: { ...themeObject },
+        typeObject: {
+          ...typeObject,
+          selectedFormulaTemplate,
+          selectedFormula: formula,
+          selectedInfo: infoSelection,
+          selectedCalc: calcSelection
+        },
+        className: lowerCamel(themeObject.name) + typeName,
+        vars: getTextVariables(variables),
+        selectedFormulaTemplate
+      };
+
+      return CURRENT_CONTEXT;
+    }
+
+    function getSelectedStages() {
+      return $$(".check input:checked").map(el => el.value);
+    }
+
+    function sentence(key, ctx) {
+      return pick(CONTEXT[key])(ctx);
+    }
+
+    function buildHead(ctx) {
+      return [
+        sentence("mainClass", ctx),
+        sentence("anotherClass", ctx),
+        sentence("attributes", ctx)
+      ];
+    }
+
+    function buildBody(stages, ctx) {
+      const body = [];
+      const unique = [...new Set(stages)];
+
+      unique.forEach(stage => {
+        body.push(sentence(stage, ctx));
+      });
+
+      return body;
+    }
+
+    function buildFooter(ctx) {
+      return [
+        sentence("displayInfo", ctx),
+        sentence("Calculate", ctx)
+      ];
+    }
+
+    function contextPreview(ctx) {
+      return [
+        `theme: ${ctx.theme}`,
+        `typeName: ${ctx.typeName}`,
+        `className: ${ctx.className}`,
+        `formula: ${ctx.formula}`,
+        `variables: ${JSON.stringify(ctx.variables)}`
+      ].join("\n");
+    }
+
+    function updateStats(ctx) {
+      $("#heroStyle").textContent = document.body.classList.contains("light-mode")
+        ? "Light Paper • Desktop Split"
+        : "Dark Neon • Desktop Split";
+      $("#contextBadge").textContent = "Context ready";
+      $("#stageBadge").textContent = "Generated";
+    }
+
+    function constructStage() {
+  generateContext();
+
+  const ctx = getContext();
+  const stages = getSelectedStages();
+
+  const head = buildHead(ctx);
+  const body = buildBody(stages, ctx);
+
+  const hasOOPStage =
+    stages.includes("Encap") ||
+    stages.includes("Inherit") ||
+    stages.includes("Poly") ||
+    stages.includes("Abstract");
+
+  const footer = hasOOPStage
+    ? buildFooter(ctx)
+    : [];
+
+  const task = [
+    ...head,
+    ...body,
+    ...footer
+  ].join("\n");
+
+  $("#taskBox").textContent = task;
+  updateStats(ctx);
+}
+
+    function applyMode(isLight) {
+      document.body.classList.toggle("light-mode", isLight);
+      $("#themeToggle").textContent = isLight ? "Dark Mode" : "Light Mode";
+      $("#styleName").textContent = `${isLight ? "Light Paper" : "Dark Neon"} • ${window.innerWidth <= 980 ? "Stacked Mobile" : "Desktop Split"}`;
+      $("#heroStyle").textContent = `${isLight ? "Light Paper" : "Dark Neon"} • ${window.innerWidth <= 980 ? "Stacked Mobile" : "Desktop Split"}`;
+    }
+
+    function setLoading(isLoading) {
+      $("#loadingOverlay").classList.toggle("hidden", !isLoading);
+    }
+
+    function reloadIframe() {
+      const iframe = $("#ideFrame");
+      setLoading(true);
+      iframe.src = IDE_SRC;
+    }
+
+    function openInNewTab() {
+      window.open(IDE_SRC, "_blank", "noopener,noreferrer");
+    }
+
+    $("#themeToggle").addEventListener("click", () => {
+      applyMode(!document.body.classList.contains("light-mode"));
+    });
+
+    $("#constructBtn").addEventListener("click", constructStage);
+    $("#reloadBtn").addEventListener("click", reloadIframe);
+    $("#openTabBtn").addEventListener("click", openInNewTab);
+
+    $("#ideFrame").addEventListener("load", () => setLoading(false));
+
+    window.addEventListener("resize", () => {
+      $("#styleName").textContent = `${document.body.classList.contains("light-mode") ? "Light Paper" : "Dark Neon"} • ${window.innerWidth <= 980 ? "Stacked Mobile" : "Desktop Split"}`;
+      $("#heroStyle").textContent = $("#styleName").textContent;
+    });
+
+    generateContext();
+    applyMode(false);
+    $("#contextBadge").textContent = "Context ready";
+    $("#stageBadge").textContent = "Waiting";
+    $("#taskBox").textContent = "Press Construct Stage to generate a task.";
+    setLoading(true);
+    $("#ideFrame").src = IDE_SRC;
+  </script>
+</body>
+</html>
